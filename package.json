@@ -1,0 +1,28 @@
+{
+  "name": "download_media",
+  "version": "1.0.0",
+  "description": "Sistema web moderno para download e extração de áudio e vídeo com yt-dlp e ffmpeg",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": [
+    "yt-dlp",
+    "ffmpeg",
+    "downloader",
+    "web-ui",
+    "media-downloader",
+    "audio-extractor"
+  ],
+  "author": "Antigravity Expert Development",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "multer": "^2.4.0"
+  }
+}
