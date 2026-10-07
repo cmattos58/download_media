@@ -2,6 +2,13 @@
  * MediaFetch Web - Frontend Application
  */
 
+// Renderiza ícones Lucide; não quebra se a biblioteca não estiver disponível
+function renderIcons() {
+  if (typeof lucide !== 'undefined' && lucide.createIcons) {
+    lucide.createIcons();
+  }
+}
+
 const state = {
   currentTab: 'tab-new',
   downloadMode: 'single', // 'single' | 'batch'
@@ -62,7 +69,7 @@ function showToast(message, type = 'info') {
   `;
 
   container.appendChild(toast);
-  lucide.createIcons();
+  renderIcons();
 
   requestAnimationFrame(() => {
     toast.classList.remove('translate-y-2', 'opacity-0');
@@ -197,7 +204,7 @@ async function analyzeSingleUrl() {
   
   btnAnalyze.disabled = true;
   btnAnalyze.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin text-blue-400"></i><span>Analisando...</span>';
-  lucide.createIcons();
+  renderIcons();
 
   try {
     const res = await fetch(`/api/info?url=${encodeURIComponent(url)}`);
@@ -227,11 +234,15 @@ async function analyzeSingleUrl() {
     previewCard.classList.remove('hidden');
     showToast('Mídia analisada com sucesso!', 'success');
   } catch (err) {
-    showToast(err.message, 'error');
+    const offline = !navigator.onLine || err instanceof TypeError;
+    showToast(
+      offline ? 'Sem conexão com a internet ou com o servidor. Verifique a rede e tente novamente.' : err.message,
+      'error'
+    );
   } finally {
     btnAnalyze.disabled = false;
     btnAnalyze.innerHTML = '<i data-lucide="search" class="w-4 h-4 text-blue-400"></i><span>Analisar</span>';
-    lucide.createIcons();
+    renderIcons();
   }
 }
 
@@ -473,7 +484,7 @@ function renderJobs() {
   }
 
   container.innerHTML = state.jobs.map(job => renderJobCard(job)).join('');
-  lucide.createIcons();
+  renderIcons();
 }
 
 function renderJobCard(job) {
@@ -778,7 +789,7 @@ function renderLibrary() {
   `;
   }).join('');
 
-  lucide.createIcons();
+  renderIcons();
 }
 
 async function deleteLibraryItem(type, filename) {
@@ -839,7 +850,7 @@ function openPlayerModal(type, encodedFilename, displayName, sizeFormatted = '')
   }
 
   modal.classList.remove('hidden');
-  lucide.createIcons();
+  renderIcons();
 }
 
 function closePlayerModal() {
@@ -970,7 +981,7 @@ async function updateYtDlp() {
   const btn = document.getElementById('btn-update-ytdlp');
   btn.disabled = true;
   btn.innerHTML = '<i data-lucide="loader" class="w-3.5 h-3.5 animate-spin"></i><span>Atualizando...</span>';
-  lucide.createIcons();
+  renderIcons();
 
   try {
     const res = await fetch('/api/system/update-ytdlp', { method: 'POST' });
@@ -986,9 +997,13 @@ async function updateYtDlp() {
   } finally {
     btn.disabled = false;
     btn.innerHTML = '<i data-lucide="arrow-up-circle" class="w-3.5 h-3.5"></i><span>Atualizar Agora</span>';
-    lucide.createIcons();
+    renderIcons();
   }
 }
+
+// Aviso quando o navegador perde/recupera a conexão de rede
+window.addEventListener('offline', () => showToast('Você está sem internet. Downloads novos podem falhar.', 'error'));
+window.addEventListener('online', () => showToast('Conexão com a internet restabelecida.', 'success'));
 
 // ==========================================
 // REAL-TIME SERVER-SENT EVENTS (SSE)
@@ -997,7 +1012,14 @@ function setupSSE() {
   const eventSource = new EventSource('/api/events');
   const statusEl = document.getElementById('sse-status');
 
+  let wasDisconnected = false;
+
   eventSource.onopen = () => {
+    if (wasDisconnected) {
+      wasDisconnected = false;
+      loadJobs();
+      loadLibrary();
+    }
     statusEl.innerHTML = `
       <span class="w-2 h-2 rounded-full bg-emerald-500 live-pulse"></span>
       <span class="text-slate-300 hidden md:inline">Servidor Conectado</span>
@@ -1005,6 +1027,7 @@ function setupSSE() {
   };
 
   eventSource.onerror = () => {
+    wasDisconnected = true;
     statusEl.innerHTML = `
       <span class="w-2 h-2 rounded-full bg-amber-500"></span>
       <span class="text-amber-400 hidden md:inline">Reconectando...</span>

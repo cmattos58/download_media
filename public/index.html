@@ -5,31 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MediaFetch Web - Download e Extração de Mídia</title>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Tailwind CSS (build local: npm run build:css) -->
+  <link rel="stylesheet" href="/css/tailwind.css">
+  <!-- Lucide Icons (local) -->
+  <script src="/vendor/lucide.min.js"></script>
   <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            brand: {
-              50: '#eff6ff',
-              100: '#dbeafe',
-              500: '#3b82f6',
-              600: '#2563eb',
-              700: '#1d4ed8',
-              900: '#1e3a8a',
-            }
-          }
-        }
-      }
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
     }
   </script>
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- Custom CSS -->
-  <link rel="stylesheet" href="/css/style.css">
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-blue-600 selection:text-white">
 

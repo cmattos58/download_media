@@ -3,7 +3,20 @@ import path from 'node:path';
 import fs from 'node:fs';
 import { config } from './config.js';
 
+const NETWORK_ERROR_PATTERN = /(temporary failure in name resolution|name or service not known|getaddrinfo|failed to resolve|network is unreachable|no route to host|connection (?:refused|reset|timed out)|timed out|unable to download (?:webpage|json|video data)|urlopen error|nodename nor servname)/i;
+
 export class Downloader {
+  /**
+   * Converts raw yt-dlp network errors into a clear message for the user.
+   */
+  static friendlyError(message) {
+    const text = String(message || '');
+    if (NETWORK_ERROR_PATTERN.test(text)) {
+      return 'Sem conexão com a internet (ou o site está inacessível). Verifique a rede e tente novamente.';
+    }
+    return text;
+  }
+
   /**
    * Fetches metadata for a given URL without downloading.
    */
@@ -51,7 +64,7 @@ export class Downloader {
         clearTimeout(timeout);
         if (settled) return;
         if (code !== 0) {
-          return fail(new Error(stderrData.trim() || `yt-dlp saiu com erro código ${code}`));
+          return fail(new Error(Downloader.friendlyError(stderrData.trim()) || `yt-dlp saiu com erro código ${code}`));
         }
 
         try {
@@ -245,7 +258,7 @@ export class Downloader {
             fileSize
           });
         } else {
-          reject(new Error(lastError || `Falha no download (código de saída: ${code})`));
+          reject(new Error(Downloader.friendlyError(lastError) || `Falha no download (código de saída: ${code})`));
         }
       });
 

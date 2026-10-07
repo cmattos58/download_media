@@ -7,12 +7,12 @@ URLS_FILE="${URLS_FILE:-videos.txt}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
 
-VIDEO_OUTPUT_DIR="${VIDEO_OUTPUT_DIR:-./downloads}"
+VIDEO_OUTPUT_DIR="${VIDEO_OUTPUT_DIR:-./downloads/videos}"
 VIDEO_FORMAT="${VIDEO_FORMAT:-bestvideo+bestaudio/best}"
 VIDEO_MERGE_FORMAT="${VIDEO_MERGE_FORMAT:-mkv}"
 VIDEO_LOG_FILE="${VIDEO_LOG_FILE:-downloads.log}"
 
-AUDIO_OUTPUT_DIR="${AUDIO_OUTPUT_DIR:-./audios}"
+AUDIO_OUTPUT_DIR="${AUDIO_OUTPUT_DIR:-./downloads/audios}"
 AUDIO_FORMAT="${AUDIO_FORMAT:-mp3}"
 AUDIO_QUALITY="${AUDIO_QUALITY:-192K}"
 AUDIO_LOG_FILE="${AUDIO_LOG_FILE:-audios.log}"
@@ -27,9 +27,9 @@ Uso:
 
 Variaveis opcionais:
   URLS_FILE           Arquivo com URLs. Padrao: videos.txt
-  VIDEO_OUTPUT_DIR    Pasta de saida para videos. Padrao: ./downloads
+  VIDEO_OUTPUT_DIR    Pasta de saida para videos. Padrao: ./downloads/videos
   VIDEO_LOG_FILE      Log de videos. Padrao: downloads.log
-  AUDIO_OUTPUT_DIR    Pasta de saida para audios. Padrao: ./audios
+  AUDIO_OUTPUT_DIR    Pasta de saida para audios. Padrao: ./downloads/audios
   AUDIO_LOG_FILE      Log de audios. Padrao: audios.log
 EOF
 }

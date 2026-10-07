@@ -1,0 +1,8 @@
+node_modules
+test_venv
+.git
+.agents
+.codex
+downloads
+data
+*.log

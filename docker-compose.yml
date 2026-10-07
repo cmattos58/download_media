@@ -4,7 +4,7 @@ services:
     container_name: mediafetch-web
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "3001:3000"
     volumes:
       - ./downloads:/app/downloads
       - ./data:/app/data

@@ -32,14 +32,23 @@ fi
 # 3. Garantir instalação dos pacotes npm
 if [[ ! -d "node_modules" ]]; then
     echo "[INFO] Instalando dependências npm..."
-    npm install --production
+    npm install
+fi
+
+# 3b. Gerar o CSS local (Tailwind) quando disponível; senão usa o já gerado
+if [[ -x "node_modules/.bin/tailwindcss" ]]; then
+    npm run build:css >/dev/null 2>&1 || echo "[AVISO] Falha ao gerar o CSS; usando o arquivo existente."
+fi
+if [[ ! -f "public/css/tailwind.css" ]]; then
+    echo "[ERRO] public/css/tailwind.css não existe. Rode: npm install && npm run build:css"
+    exit 1
 fi
 
 # 4. Criar pastas necessárias
 mkdir -p downloads/videos downloads/audios data
 
 # 5. Iniciar o servidor
-PORT="${PORT:-3000}"
+PORT="${PORT:-3001}"
 export PORT
 
 echo "[INFO] Iniciando servidor na porta $PORT..."
